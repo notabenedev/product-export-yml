@@ -1,0 +1,32 @@
+{
+    "name": "notabenedev/product-export-yml",
+    "description": "Export categories, products, variations to YML",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "N.Borisova",
+            "email": "n.borisova@me.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "portedcheese/base-settings": "@dev",
+        "portedcheese/admin-site-menu": "@dev",
+        "portedcheese/category-product": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Notabenedev\\ProductExportYml\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Notabenedev\\ProductExportYml\\ProductExportYmlServiceProvider"
+            ]
+        }
+    }
+}
