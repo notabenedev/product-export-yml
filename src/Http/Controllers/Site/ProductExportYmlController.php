@@ -62,8 +62,9 @@ class ProductExportYmlController extends Controller
                         break;
                     }
                     // description
-                    $description = config("product-export-yml.productDescriptionField", "description") == "description" ?
-                        htmlspecialchars($product->description) : $product->short;
+                    $description = (config("product-export-yml.productDescriptionField", "description") == "description") ?
+                        (config("product-export-yml.productDescriptionStripTags", true) ?
+                            strip_tags($product->description) : '<![CDATA[ '.$product->description.' ]]>') : $product->short;
                     // generate xml
                     foreach ($product->variations as $variation){
                         if (! empty($variation->description))
