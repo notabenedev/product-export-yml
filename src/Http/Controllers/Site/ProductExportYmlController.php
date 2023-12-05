@@ -64,8 +64,8 @@ class ProductExportYmlController extends Controller
                     // description
                     $description = (config("product-export-yml.productDescriptionField", "description") == "description") ?
                         (config("product-export-yml.productDescriptionStripTags", true) ?
-                            strip_tags($product->description) :
-                            (! empty($product->description) ? '<![CDATA[ '.$product->description.' ]]>' : '' )
+                            htmlspecialchars(strip_tags($product->description),ENT_XML1) :
+                            (! empty($product->description) ? '<![CDATA[ '.htmlspecialchars($product->description, ENT_XML1).' ]]>' : '' )
                         ):
                         $product->short;
                     // shortDescription if  productDescriptionField ! == short
