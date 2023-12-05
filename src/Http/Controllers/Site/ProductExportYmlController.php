@@ -26,7 +26,7 @@ class ProductExportYmlController extends Controller
             $shop->addChild("name",  env("APP_NAME") );
             $shop->addChild("company",  env("APP_NAME") );
             $shop->addChild("url",  env("APP_URL") );
-            $currencies = $shop->addChild("currencies",  env("APP_URL") );
+            $currencies = $shop->addChild("currencies");
             $currency = $currencies->addChild("currency");
             $currency->addAttribute("id","RUR");
             $currency->addAttribute("rate", "1");
