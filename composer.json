@@ -14,7 +14,6 @@
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "portedcheese/base-settings": "@dev",
-        "portedcheese/admin-site-menu": "@dev",
         "portedcheese/category-product": "@dev"
     },
     "autoload": {
