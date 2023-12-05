@@ -63,7 +63,7 @@ class ProductExportYmlController extends Controller
                     }
                     // description
                     $description = config("product-export-yml.productDescriptionField", "description") == "description" ?
-                        $product->description : $product->short;
+                        htmlspecialchars($product->description) : $product->short;
                     // generate xml
                     foreach ($product->variations as $variation){
                         if (! empty($variation->description))
