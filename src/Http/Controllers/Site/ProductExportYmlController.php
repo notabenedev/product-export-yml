@@ -64,11 +64,22 @@ class ProductExportYmlController extends Controller
                     // description
                     $description = (config("product-export-yml.productDescriptionField", "description") == "description") ?
                         (config("product-export-yml.productDescriptionStripTags", true) ?
-                            strip_tags($product->description) : '<![CDATA[ '.$product->description.' ]]>') : $product->short;
+                            strip_tags($product->description) :
+                            (! empty($product->description) ? '<![CDATA[ '.$product->description.' ]]>' : '' )
+                        ):
+                        $product->short;
+                    // shortDescription if  productDescriptionField ! == short
+                    $shortDescription = config("product-export-yml.productDescriptionField", "description") !== "short" ?
+                        $product->short : null;
                     // generate xml
                     foreach ($product->variations as $variation){
-                        if (! empty($variation->description))
-                            $description .= " ($variation->description)";
+                        if (! empty($variation->description)){
+                            if (empty($shortDescription))
+                                $shortDescription .= "$variation->description";
+                                else
+                                $shortDescription .= " ($variation->description)";
+                        }
+
                         $offerYml = $offersYml->addChild("offer");
                         $offerYml->addAttribute("id", $variation->id);
                         $offerYml->addChild("name", htmlspecialchars($product->title));
@@ -78,6 +89,8 @@ class ProductExportYmlController extends Controller
                             $offerYml->addChild("oldprice", $variation->sale_price);
                         $offerYml->addChild("categoryId", $product->category_id);
                         $offerYml->addChild("description", $description);
+                        if (! empty($shortDescription))
+                            $offerYml->addChild("shortDescription", $shortDescription);
                         if(! empty($variation->disabled_at)){
                             $offerYml->addChild("available","false");
                             $offerYml->addChild("store","false");
