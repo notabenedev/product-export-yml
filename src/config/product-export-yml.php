@@ -1,10 +1,13 @@
 <?php
 return [
     "siteRoutes" => true,
-    "productExportYmlSiteUrlName" => "market",
-    // short | description field to offer
-    "productExportDescriptionField" => "description",
+    "siteUrlName" => "market",
+    // short | description field to offer description
+    "productDescriptionField" => "description",
+    // string | null field to filter data
+    "categoriesFilterField" => "published_at",
+    "productsFilterField" => "published_at",
     // php artisan cache:clear after change cacheLifetime
-    "cacheLifetime" => 86400,
+    "cacheLifetime" => 0,
     "cacheKey" => "export-yml",
 ];

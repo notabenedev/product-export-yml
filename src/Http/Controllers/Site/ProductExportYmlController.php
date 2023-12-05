@@ -32,7 +32,11 @@ class ProductExportYmlController extends Controller
             $currency->addAttribute("rate", "1");
             $categoriesYml = $shop->addChild("categories");
 
-            Category::chunk(100, function ($categories) use ($categoriesYml) {
+            $categories = Category::query()->select("id","parent_id", "title");
+            $categoriesFilter = config("product-export-yml.categoriesFilterField",null);
+            if (! empty($categoriesFilter))
+                $categories->whereNotNull($categoriesFilter);
+            $categories->chunk(100, function ($categories) use ($categoriesYml) {
                 foreach ($categories as $category) {
                     $categoryYml = $categoriesYml->addChild("category", $category->title);
                     $categoryYml->addAttribute("id", $category->id);
@@ -40,8 +44,15 @@ class ProductExportYmlController extends Controller
                         $categoryYml->addAttribute("parentId", $category->parent_id);
                 }
             });
+
             $offersYml = $shop->addChild("offers");
-            Product::query()->select("id", "title", $field, "slug", "category_id", "short")->with("variations")->with("images")->chunk(100, function ($products) use ($offersYml, $field) {
+            $products = Product::query()->select("id", "title", $field, "slug", "category_id", "short");
+            $productsFilter = config("product-export-yml.productsFilterField",null);
+            if (! empty($productsFilter))
+                $products->whereNotNull($productsFilter);
+            $products->with("variations")
+                ->with("images")
+                ->chunk(100, function ($products) use ($offersYml, $field) {
                 foreach ($products as $product) {
                     // first image
                     $imageSrc = false;
@@ -51,7 +62,7 @@ class ProductExportYmlController extends Controller
                         break;
                     }
                     // description
-                    $description = config("product-export-yml.productExportDescriptionField", "description") == "description" ?
+                    $description = config("product-export-yml.productDescriptionField", "description") == "description" ?
                         $product->description : $product->short;
                     // generate xml
                     foreach ($product->variations as $variation){
