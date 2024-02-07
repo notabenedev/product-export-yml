@@ -87,6 +87,7 @@ class ProductExportYmlController extends Controller
                         $offerYml->addChild("price", $variation->price);
                         if(!empty($variation->sale_price) && $variation->sale_price > 0  )
                             $offerYml->addChild("oldprice", $variation->sale_price);
+                        $offerYml->addChild("currencyId", "RUR");
                         $offerYml->addChild("categoryId", $product->category_id);
                         $offerYml->addChild("description", $description);
                         if (! empty($shortDescription))
