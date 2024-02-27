@@ -55,10 +55,11 @@ class ProductExportYmlController extends Controller
                 ->chunk(100, function ($products) use ($offersYml, $field) {
                 foreach ($products as $product) {
                     // first image
-                    $imageSrc = false;
+                    $imageRoute =  class_exists(\App\ImageFilter::class) ? 'image-filter' : 'imagecache';
+                    $imageSrc = null;
                     foreach ($product->images as $img)
                     {
-                        $imageSrc = route('imagecache', ['template' => 'original', 'filename' => $img->file_name]);
+                        $imageSrc = route($imageRoute, ['template' => 'original', 'filename' => $img->file_name]);
                         break;
                     }
                     // description
