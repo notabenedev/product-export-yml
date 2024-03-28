@@ -6,6 +6,8 @@ use App\Category;
 use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use PortedCheese\CategoryProduct\Facades\ProductActions;
 
 
 class ProductExportYmlController extends Controller
@@ -72,8 +74,29 @@ class ProductExportYmlController extends Controller
                     // shortDescription if  productDescriptionField ! == short
                     $shortDescription = config("product-export-yml.productDescriptionField", "description") !== "short" ?
                         $product->short : null;
+
+                    // country of origin
+                    $productSpecGroups = ProductActions::getProductSpecificationsByGroups($product);
+                    $origin = null;
+                    $productParams = [];
+                    foreach ($productSpecGroups as $group){
+                        foreach ($group->specifications as $id => $spec){
+                            if ($spec->title == "Производство" || $spec->title == "Производитель")
+                            {
+                                $origin = implode(", ", $spec->values);
+                                break;
+                            }
+                            else
+                            {
+                                if (count($spec->values) < 2)
+                                    $productParams[$spec->title] = $spec->values[0];
+                            }
+                        }
+                    }
+
                     // generate xml
                     foreach ($product->variations as $variation){
+                        if (($variation->price) == 0) break;
                         if (! empty($variation->description)){
                             if (empty($shortDescription))
                                 $shortDescription .= "$variation->description";
@@ -102,6 +125,15 @@ class ProductExportYmlController extends Controller
                         }
                         if ($imageSrc)
                             $offerYml->addChild("picture", "$imageSrc");
+                        if ($origin)
+                            $offerYml->addChild("country_of_origin", $origin);
+                        foreach ($productParams as $param => $paramValue) {
+                            $offerYml->addChild("param", $paramValue)->addAttribute("name",$param);
+                        }
+                        if ($variation->specifications)
+                            foreach ($variation->specifications as $param){
+                                $offerYml->addChild("param", $param->value)->addAttribute("name",$param->title);
+                            }
                     }
                 }
             });
