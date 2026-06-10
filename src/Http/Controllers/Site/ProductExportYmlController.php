@@ -103,16 +103,14 @@ class ProductExportYmlController extends Controller
                                 else
                                 $shortDescription .= " ($variation->description)";
                         }
+                        if(! empty($variation->disabled_at)) break;
 
                         $offerYml = $offersYml->addChild("offer");
                         $offerYml->addAttribute("id", $variation->id);
-                        if(! empty($variation->disabled_at)){
-                            $offerYml->addAttribute("available","false");
-                            $offerYml->addChild("store","false");
-                        } else{
-                            $offerYml->addAttribute("available","true");
-                            $offerYml->addChild("store","true");
-                        }
+
+                        $offerYml->addAttribute("available","true");
+                        $offerYml->addChild("store","true");
+
                         $offerYml->addChild("name", htmlspecialchars($product->title));
                         $offerYml->addChild("url", route("catalog.products.show", ["product" => $product->slug]));
                         $offerYml->addChild("price", $variation->price);
